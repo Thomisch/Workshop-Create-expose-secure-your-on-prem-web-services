@@ -1,0 +1,23 @@
+services:
+  secure-ubuntu:
+    build: .
+    container_name: secure-ubuntu-lab
+    hostname: secure-lab
+    volumes:
+      - ./shared:/home/secureuser/shared
+      - ./logs:/var/log  # Pour accéder aux logs fail2ban
+    ports:
+      - "2222:22"
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+    privileged: true  # Nécessaire pour fail2ban (iptables)
+    
+  # Optionnel: Ajouter un conteneur de monitoring
+  monitoring:
+    image: ubuntu:22.04
+    container_name: monitoring-lab
+    hostname: monitor-lab
+    command: tail -f /dev/null
+    volumes:
+      - ./logs:/var/log/monitoring
